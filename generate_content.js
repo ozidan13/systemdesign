@@ -1,0 +1,314 @@
+const fs = require('fs');
+
+const content = {
+    siteTitle: "System Design Master",
+    siteTitle_ar: "ماستر تصميم الأنظمة",
+    tagline: "Master System Design from Zero to Hero",
+    tagline_ar: "اتعلم تصميم الأنظمة من الصفر للاحتراف",
+    guideTitle: "Building an Interactive System Design Learning Platform",
+    projectGoal: "To develop an engaging, interactive platform for learning system design principles through visualizations, architecture diagrams, and real-world case studies",
+    modules: [
+        {
+            id: "module01", title: "Introduction to System Design", title_ar: "مقدمة في تصميم الأنظمة",
+            slug: "module01_intro_to_sd", level: "beginner", color: "from-indigo-600 to-indigo-800",
+            shortDescription: "Understanding the fundamentals of designing scalable systems",
+            shortDescription_ar: "فهم أساسيات تصميم الأنظمة القابلة للتوسع",
+            description: "Learn what system design is, why it matters, and the fundamental trade-offs every engineer faces when building distributed systems.",
+            description_ar: "اتعلم إيه هو تصميم الأنظمة، وليه مهم، والتوازنات الأساسية اللي كل مهندس بيواجهها لما بيبني أنظمة موزعة.",
+            topics: [
+                { title: "What is System Design?", title_ar: "إيه هو تصميم الأنظمة؟", description: "System design is the process of defining the architecture, components, modules, interfaces, and data for a system to satisfy specified requirements.", description_ar: "تصميم الأنظمة هو عملية تحديد البنية والمكونات والوحدات والواجهات والبيانات لنظام معين عشان يحقق متطلبات محددة.", analogy_ar: "تخيل إنك هتبني مدينة كاملة — لازم تخطط للشوارع والمياه والكهربا قبل ما تبني البيوت.", keyPoints: [{ title: "Architecture", description: "Defining system structure" }, { title: "Components", description: "Building blocks of the system" }, { title: "Trade-offs", description: "Every design decision has consequences" }] },
+                { title: "Horizontal vs Vertical Scaling", title_ar: "التوسع الأفقي مقابل الرأسي", description: "Vertical scaling means adding more power to existing machines. Horizontal scaling means adding more machines.", description_ar: "التوسع الرأسي يعني تكبر الماكينة. التوسع الأفقي يعني تزود ماكينات.", analogy_ar: "تكبير المطعم (Vertical) مقابل فتح فروع جديدة (Horizontal).", keyPoints: [{ title: "Vertical", description: "Scale up — bigger machine" }, { title: "Horizontal", description: "Scale out — more machines" }, { title: "Elasticity", description: "Auto-scale based on demand" }] },
+                { title: "Latency vs Throughput", title_ar: "السرعة مقابل الحجم", description: "Latency is the time to complete a single request. Throughput is the number of requests processed per unit time.", description_ar: "الـ Latency هي الوقت اللي بياخده طلب واحد. الـ Throughput هو عدد الطلبات في الثانية.", analogy_ar: "سرعة العربية مقابل عدد الركاب اللي بتشيلهم.", keyPoints: [{ title: "Latency", description: "Time per request (ms)" }, { title: "Throughput", description: "Requests per second (RPS)" }, { title: "P99", description: "99th percentile latency" }] },
+                { title: "Reliability & Availability", title_ar: "الموثوقية والتوافر", description: "Reliability means the system works correctly. Availability means the system is accessible when needed (measured as uptime %).", description_ar: "الموثوقية يعني النظام بيشتغل صح. التوافر يعني النظام متاح لما تحتاجه.", analogy_ar: "النظام لازم يشتغل 24/7 — لو سيرفر وقع، النظام يفضل شغال.", keyPoints: [{ title: "SLA", description: "Service Level Agreement (99.9%)" }, { title: "Redundancy", description: "Eliminate single points of failure" }, { title: "Failover", description: "Automatic switching to backup" }] }
+            ],
+            codeLanguages: ["typescript"], visualExamples: [{ title: "Scaling Comparison", description: "H vs V scaling diagram", type: "svg" }],
+            keyFeatures: ["Scaling fundamentals", "Latency vs Throughput", "Availability & SLAs", "Trade-off analysis"],
+            demoSection: { title: "Scaling Simulator", title_ar: "محاكي التوسع", description: "Experiment with horizontal vs vertical scaling under load", interactiveElements: [{ type: "simulator", description: "Adjust request load and see scaling behavior" }] }
+        },
+        {
+            id: "module02", title: "Networking Basics", title_ar: "أساسيات الشبكات",
+            slug: "module02_networking_basics", level: "beginner", color: "from-blue-600 to-blue-800",
+            shortDescription: "How computers communicate over networks",
+            shortDescription_ar: "إزاي الكمبيوترات بتتكلم مع بعض عبر الشبكات",
+            description: "Understand the networking fundamentals that power every distributed system — from TCP/IP to DNS resolution.",
+            description_ar: "افهم أساسيات الشبكات اللي بتشغل كل الأنظمة الموزعة.",
+            topics: [
+                { title: "Client-Server Model", title_ar: "نموذج العميل والخادم", description: "The fundamental pattern where clients send requests and servers respond.", description_ar: "النموذج الأساسي حيث العميل بيبعت طلب والسيرفر بيرد.", analogy_ar: "أنت (Client) بتروح المطعم (Server) وبتطلب أكل (Request) وبترجعلك (Response).", keyPoints: [{ title: "Request/Response", description: "Fundamental communication pattern" }, { title: "Stateless", description: "Server doesn't remember previous requests" }, { title: "Ports", description: "Endpoints for network services" }] },
+                { title: "IP Addresses & DNS", title_ar: "عناوين IP والـ DNS", description: "Every device has an IP address. DNS translates human-readable names to IP addresses.", description_ar: "كل جهاز على الإنترنت ليه رقم (IP). الـ DNS هو دليل التليفونات.", analogy_ar: "الـ IP زي رقم التليفون — والـ DNS زي دليل الأسماء.", keyPoints: [{ title: "IPv4/IPv6", description: "Address formats" }, { title: "DNS Resolution", description: "Domain to IP lookup" }, { title: "TTL", description: "Cache duration for DNS records" }] },
+                { title: "TCP vs UDP", title_ar: "TCP مقابل UDP", description: "TCP guarantees ordered, reliable delivery. UDP is faster but unreliable.", description_ar: "TCP بيضمن التوصيل الصح. UDP أسرع بس مش مضمون.", analogy_ar: "TCP زي المكالمة التليفونية (تأكيد كل كلمة) — UDP زي الراديو (بث مستمر بدون تأكيد).", keyPoints: [{ title: "TCP", description: "Reliable, ordered, connection-based" }, { title: "UDP", description: "Fast, unordered, connectionless" }, { title: "3-Way Handshake", description: "SYN → SYN-ACK → ACK" }] },
+                { title: "HTTP/HTTPS", title_ar: "بروتوكول HTTP/HTTPS", description: "HTTP is the application protocol powering the web. HTTPS adds encryption via TLS.", description_ar: "HTTP هو البروتوكول اللي الإنترنت بيشتغل بيه. HTTPS = HTTP + تشفير.", analogy_ar: "HTTP زي بوستكارد — أي حد يقدر يقرأها. HTTPS زي جواب مقفول بقفل.", keyPoints: [{ title: "Methods", description: "GET, POST, PUT, DELETE" }, { title: "Status Codes", description: "200, 301, 404, 500" }, { title: "TLS/SSL", description: "Encryption layer for HTTPS" }] }
+            ],
+            codeLanguages: ["typescript"], visualExamples: [{ title: "DNS Resolution Flow", description: "Step-by-step DNS lookup", type: "svg" }],
+            keyFeatures: ["Client-Server model", "DNS deep dive", "TCP vs UDP", "HTTP/HTTPS fundamentals"],
+            demoSection: { title: "DNS Resolution Simulator", title_ar: "محاكي DNS", description: "Enter a domain and watch DNS resolution step by step", interactiveElements: [{ type: "simulator", description: "DNS lookup visualization" }] }
+        },
+        {
+            id: "module03", title: "APIs & Communication Protocols", title_ar: "الـ APIs وبروتوكولات التواصل",
+            slug: "module03_apis_protocols", level: "beginner", color: "from-teal-600 to-teal-800",
+            shortDescription: "How services talk to each other",
+            shortDescription_ar: "إزاي الخدمات بتتكلم مع بعض",
+            description: "Master the protocols and patterns that enable service-to-service communication in modern systems.",
+            description_ar: "اتعلم البروتوكولات والأنماط اللي بتخلي الخدمات تتكلم مع بعض في الأنظمة الحديثة.",
+            topics: [
+                { title: "What is an API?", title_ar: "إيه هو الـ API؟", description: "An API is a contract that defines how two pieces of software communicate.", description_ar: "الـ API هو عقد بيحدد إزاي برنامجين بيتكلموا مع بعض.", analogy_ar: "الـ API هو الجرسون في المطعم — بياخد الطلب منك ويوصله للمطبخ ويرجعلك بالأكل.", keyPoints: [{ title: "Contract", description: "Defined interface between systems" }, { title: "Versioning", description: "v1, v2 API evolution" }, { title: "Documentation", description: "OpenAPI/Swagger specs" }] },
+                { title: "REST API", title_ar: "REST API", description: "RESTful APIs use HTTP methods and URLs to represent resources and operations.", description_ar: "أشهر طريقة لبناء APIs — بتستخدم HTTP methods وURLs.", analogy_ar: "REST زي قائمة المطعم — كل طبق (Resource) ليه رقم (URL) وطريقة طلب (GET/POST).", keyPoints: [{ title: "Resources", description: "Nouns not verbs (/users, /posts)" }, { title: "HTTP Methods", description: "GET/POST/PUT/DELETE" }, { title: "Stateless", description: "Each request is independent" }] },
+                { title: "GraphQL", title_ar: "GraphQL", description: "GraphQL lets clients request exactly the data they need, avoiding over-fetching.", description_ar: "GraphQL بيخليك تطلب بس البيانات اللي محتاجها.", analogy_ar: "REST زي وجبة ثابتة — GraphQL زي بوفيه مفتوح بتاخد اللي عايزه بس.", keyPoints: [{ title: "Schema", description: "Type system for your API" }, { title: "Queries", description: "Fetch exactly what you need" }, { title: "Mutations", description: "Modify data operations" }] },
+                { title: "WebSockets", title_ar: "WebSockets", description: "Full-duplex communication channel over a single TCP connection for real-time data.", description_ar: "اتصال مفتوح ثنائي الاتجاه — مثالي للـ real-time.", analogy_ar: "REST زي رسائل SMS — WebSocket زي مكالمة تليفون مفتوحة.", keyPoints: [{ title: "Full-duplex", description: "Send and receive simultaneously" }, { title: "Persistent", description: "Connection stays open" }, { title: "Events", description: "Push-based, not poll-based" }] },
+                { title: "gRPC", title_ar: "gRPC", description: "High-performance RPC framework using Protocol Buffers for serialization.", description_ar: "إطار عمل عالي الأداء للتواصل بين الخدمات.", analogy_ar: "gRPC أسرع من REST — بيستخدم لغة مشتركة (Protobuf) بدل JSON.", keyPoints: [{ title: "Protobuf", description: "Binary serialization format" }, { title: "Streaming", description: "Server/Client/Bidirectional" }, { title: "Code Generation", description: "Auto-generate client/server code" }] }
+            ],
+            codeLanguages: ["typescript"], visualExamples: [{ title: "API Comparison", description: "REST vs GraphQL vs gRPC", type: "svg" }],
+            keyFeatures: ["REST API design", "GraphQL queries", "WebSocket real-time", "gRPC performance"],
+            demoSection: { title: "API Explorer", title_ar: "مستكشف الـ API", description: "Build and test API requests interactively", interactiveElements: [{ type: "explorer", description: "HTTP method selector and response viewer" }] }
+        },
+        {
+            id: "module04", title: "Databases & Storage", title_ar: "قواعد البيانات والتخزين",
+            slug: "module04_databases", level: "intermediate", color: "from-emerald-600 to-emerald-800",
+            shortDescription: "Choosing the right database for your system",
+            shortDescription_ar: "اختيار قاعدة البيانات المناسبة لنظامك",
+            description: "Deep dive into SQL vs NoSQL, indexing strategies, ACID properties, and when to use which database.",
+            description_ar: "غوص عميق في الفرق بين SQL و NoSQL، واستراتيجيات الفهرسة، وخصائص ACID.",
+            topics: [
+                { title: "SQL vs NoSQL", title_ar: "SQL مقابل NoSQL", description: "SQL databases use structured tables with relationships. NoSQL databases offer flexible schemas.", description_ar: "SQL بتستخدم جداول منظمة. NoSQL بتقدم مرونة في الشكل.", analogy_ar: "SQL زي Excel (جداول منظمة) — NoSQL زي دولاب (كل درج ممكن يبقى شكل مختلف).", keyPoints: [{ title: "SQL", description: "Structured, relational, ACID" }, { title: "NoSQL", description: "Flexible, distributed, eventual consistency" }, { title: "Decision", description: "Data model drives the choice" }] },
+                { title: "Database Indexing", title_ar: "فهرسة قواعد البيانات", description: "Indexes speed up reads dramatically but slow down writes. B-Tree vs Hash indexes.", description_ar: "الفهرس بيسرع البحث × 1000 بس بيبطئ الكتابة.", analogy_ar: "الفهرس في آخر الكتاب — بدل ما تقلب كل الصفحات، تروح للصفحة اللي عايزها مباشرة.", keyPoints: [{ title: "B-Tree", description: "Range queries, ordered data" }, { title: "Hash", description: "Exact lookups, O(1)" }, { title: "Composite", description: "Multi-column indexes" }] },
+                { title: "ACID Properties", title_ar: "خصائص ACID", description: "Atomicity, Consistency, Isolation, Durability — the guarantees of database transactions.", description_ar: "ضمانات المعاملات: كل حاجة بتحصل أو ولا حاجة بتحصل.", analogy_ar: "تحويل بنكي — لازم الفلوس تتخصم من حساب وتتحط في التاني. مينفعش نص العملية يحصل.", keyPoints: [{ title: "Atomicity", description: "All or nothing" }, { title: "Consistency", description: "Valid state transitions" }, { title: "Isolation", description: "Concurrent transactions don't interfere" }, { title: "Durability", description: "Committed data survives crashes" }] }
+            ],
+            codeLanguages: ["typescript", "sql"], visualExamples: [{ title: "SQL vs NoSQL", description: "Data model comparison", type: "svg" }],
+            keyFeatures: ["SQL vs NoSQL trade-offs", "B-Tree indexing", "ACID guarantees", "Schema design"],
+            demoSection: { title: "Database Selector", title_ar: "اختيار قاعدة البيانات", description: "Input your use case and get database recommendations", interactiveElements: [{ type: "selector", description: "Scenario-based DB recommendation" }] }
+        },
+        {
+            id: "module05", title: "Caching Strategies", title_ar: "استراتيجيات التخزين المؤقت",
+            slug: "module05_caching", level: "intermediate", color: "from-amber-600 to-amber-800",
+            shortDescription: "Speed up your system with intelligent caching",
+            shortDescription_ar: "سرّع نظامك بالتخزين المؤقت الذكي",
+            description: "Learn caching patterns, eviction policies, and how to use Redis and CDNs to dramatically improve performance.",
+            description_ar: "اتعلم أنماط الكاش، وسياسات الإزالة، واستخدام Redis والـ CDN لتسريع الأداء.",
+            topics: [
+                { title: "What is Caching?", title_ar: "إيه هو الكاش؟", description: "Caching stores frequently accessed data in fast storage to reduce latency and database load.", description_ar: "الكاش بيخزن البيانات المطلوبة كتير في مكان سريع.", analogy_ar: "بدل ما تروح السوبر ماركت كل يوم، تجيب حاجات الأسبوع مرة واحدة وتحطهم في التلاجة. التلاجة = Cache.", keyPoints: [{ title: "Hit", description: "Data found in cache" }, { title: "Miss", description: "Data not in cache, fetch from DB" }, { title: "Hit Ratio", description: "hits / (hits + misses)" }] },
+                { title: "Cache Patterns", title_ar: "أنماط الكاش", description: "Cache-Aside, Write-Through, Write-Behind, and Read-Through patterns.", description_ar: "أنماط مختلفة لإدارة الكاش: Cache-Aside، Write-Through، Write-Behind.", analogy_ar: "Cache-Aside: بتسأل التلاجة الأول — لو فاضية بتروح السوبر ماركت.", keyPoints: [{ title: "Cache-Aside", description: "App manages cache manually" }, { title: "Write-Through", description: "Write to cache + DB together" }, { title: "Write-Behind", description: "Write cache first, DB async" }] },
+                { title: "Eviction Policies", title_ar: "سياسات الإزالة", description: "When cache is full: LRU, LFU, FIFO — which items to remove.", description_ar: "لما التلاجة تتملي، تشيل إيه الأول؟", analogy_ar: "LRU: شيل اللي من أطول وقت ماستخدمتهوش. LFU: شيل اللي أقل واحد استخدمته.", keyPoints: [{ title: "LRU", description: "Least Recently Used" }, { title: "LFU", description: "Least Frequently Used" }, { title: "TTL", description: "Time-To-Live expiration" }] }
+            ],
+            codeLanguages: ["typescript"], visualExamples: [{ title: "Cache Flow", description: "Cache hit/miss flow diagram", type: "svg" }],
+            keyFeatures: ["Cache patterns", "Eviction policies", "Redis basics", "CDN caching"],
+            demoSection: { title: "Cache Hit/Miss Simulator", title_ar: "محاكي الكاش", description: "Send requests and see cache hits vs misses in real-time", interactiveElements: [{ type: "simulator", description: "Interactive cache with stats" }] }
+        },
+        {
+            id: "module06", title: "Load Balancing & Scaling", title_ar: "توزيع الحمل والتوسع",
+            slug: "module06_load_balancing", level: "intermediate", color: "from-violet-600 to-violet-800",
+            shortDescription: "Distribute traffic across multiple servers",
+            shortDescription_ar: "وزّع الترافيك على سيرفرات متعددة",
+            description: "Understand load balancing algorithms, reverse proxies, and horizontal scaling strategies.",
+            description_ar: "افهم خوارزميات توزيع الحمل، والـ Reverse Proxy، واستراتيجيات التوسع الأفقي.",
+            topics: [
+                { title: "What is a Load Balancer?", title_ar: "إيه هو الـ Load Balancer؟", description: "A load balancer distributes incoming traffic across multiple backend servers.", description_ar: "الـ Load Balancer بيوزع الترافيك على السيرفرات.", analogy_ar: "واحد واقف على باب المطعم بيوزع الزبائن على الطاولات الفاضية بالتساوي.", keyPoints: [{ title: "Distribution", description: "Spread load evenly" }, { title: "Health Checks", description: "Remove unhealthy servers" }, { title: "Session Affinity", description: "Sticky sessions" }] },
+                { title: "LB Algorithms", title_ar: "خوارزميات التوزيع", description: "Round Robin, Least Connections, IP Hash, Weighted algorithms.", description_ar: "طرق مختلفة لتوزيع الحمل.", analogy_ar: "Round Robin: كل زبون للطاولة اللي بعدها. Least Connections: للطاولة الأقل زحمة.", keyPoints: [{ title: "Round Robin", description: "Equal distribution in order" }, { title: "Least Connections", description: "Route to least busy server" }, { title: "IP Hash", description: "Same client, same server" }] },
+                { title: "L4 vs L7 Load Balancing", title_ar: "L4 مقابل L7", description: "L4 operates on transport layer (TCP/UDP). L7 operates on application layer (HTTP).", description_ar: "L4 بيشوف الـ IP والـ Port بس — L7 بيشوف المحتوى كمان.", analogy_ar: "L4 زي الرسيبشن بيوزع حسب رقم الأوضة. L7 بيوزع حسب نوع الحجز.", keyPoints: [{ title: "Layer 4", description: "Fast, TCP/UDP based" }, { title: "Layer 7", description: "Smart, content-aware routing" }, { title: "SSL Termination", description: "Decrypt at L7 LB" }] }
+            ],
+            codeLanguages: ["typescript"], visualExamples: [{ title: "LB Architecture", description: "Load balancer with multiple servers", type: "svg" }],
+            keyFeatures: ["LB algorithms", "L4 vs L7", "Reverse proxy", "Auto-scaling"],
+            demoSection: { title: "Load Balancer Simulator", title_ar: "محاكي توزيع الحمل", description: "Watch requests distribute across servers with different algorithms", interactiveElements: [{ type: "simulator", description: "Real-time LB algorithm visualization" }] }
+        },
+        {
+            id: "module07", title: "Message Queues & Async Processing", title_ar: "طوابير الرسائل والمعالجة غير المتزامنة",
+            slug: "module07_message_queues", level: "intermediate", color: "from-orange-600 to-orange-800",
+            shortDescription: "Decouple services with asynchronous messaging",
+            shortDescription_ar: "فصل الخدمات بالرسائل غير المتزامنة",
+            description: "Learn message queues, pub/sub patterns, and event-driven architecture for resilient systems.",
+            description_ar: "اتعلم طوابير الرسائل، ونمط النشر/الاشتراك، والبنية القائمة على الأحداث.",
+            topics: [
+                { title: "Why Message Queues?", title_ar: "ليه طوابير الرسائل؟", description: "Message queues decouple producers from consumers, enabling async processing and resilience.", description_ar: "طوابير الرسائل بتفصل المنتج عن المستهلك — بتخلي النظام يستحمل الضغط.", analogy_ar: "مطعم فيه طلبات كتير — بنحطهم في طابور بدل ما الطباخ يجيله كل الأوردرات مرة واحدة.", keyPoints: [{ title: "Decoupling", description: "Producer doesn't wait for consumer" }, { title: "Buffering", description: "Handle traffic spikes" }, { title: "Retry", description: "Failed messages can be retried" }] },
+                { title: "Pub/Sub Pattern", title_ar: "نمط النشر/الاشتراك", description: "Publishers emit events. Subscribers receive only the events they're interested in.", description_ar: "الناشر بيبعت رسايل — المشتركين بيستلموا اللي مهتمين بيه بس.", analogy_ar: "زي قناة يوتيوب — بتشترك وبتوصلك الفيديوهات الجديدة.", keyPoints: [{ title: "Topics", description: "Named channels for messages" }, { title: "Fan-out", description: "One message to many subscribers" }, { title: "Filtering", description: "Subscribe to specific topics" }] },
+                { title: "Kafka vs RabbitMQ", title_ar: "Kafka مقابل RabbitMQ", description: "Kafka is a distributed log for high-throughput streaming. RabbitMQ is a traditional message broker.", description_ar: "Kafka لسرعة عالية وحجم كبير. RabbitMQ لمرونة وتوجيه متقدم.", analogy_ar: "Kafka زي جريدة يومية — كل الأخبار متسجلة ومتاحة. RabbitMQ زي البريد — رسالة لشخص معين.", keyPoints: [{ title: "Kafka", description: "Distributed log, high throughput" }, { title: "RabbitMQ", description: "Smart routing, flexible" }, { title: "SQS", description: "AWS managed queue service" }] }
+            ],
+            codeLanguages: ["typescript"], visualExamples: [{ title: "Queue Flow", description: "Producer → Queue → Consumer", type: "svg" }],
+            keyFeatures: ["Message queue patterns", "Pub/Sub", "Kafka vs RabbitMQ", "Dead letter queues"],
+            demoSection: { title: "Message Queue Visualizer", title_ar: "مرئي طوابير الرسائل", description: "Send messages and watch the queue fill and drain", interactiveElements: [{ type: "visualizer", description: "Interactive queue with producers and consumers" }] }
+        },
+        {
+            id: "module08", title: "System Components (CDN, DNS, Proxy)", title_ar: "مكونات النظام الأساسية",
+            slug: "module08_system_components", level: "intermediate", color: "from-cyan-600 to-cyan-800",
+            shortDescription: "Essential infrastructure building blocks",
+            shortDescription_ar: "مكونات البنية التحتية الأساسية",
+            description: "Master CDNs, DNS strategies, proxies, API gateways, and service meshes.",
+            description_ar: "اتقن الـ CDN، واستراتيجيات DNS، والبروكسي، وبوابات الـ API.",
+            topics: [
+                { title: "CDN (Content Delivery Network)", title_ar: "شبكة توصيل المحتوى (CDN)", description: "CDNs cache content at edge locations worldwide to reduce latency for end users.", description_ar: "الـ CDN بتحط نسخ من المحتوى في أماكن قريبة من المستخدمين.", analogy_ar: "زي ما ماكدونالدز عنده فروع في كل مكان عشان الأكل يوصل بسرعة.", keyPoints: [{ title: "Edge Servers", description: "Cache at network edge" }, { title: "PoP", description: "Points of Presence worldwide" }, { title: "Cache Invalidation", description: "Purge stale content" }] },
+                { title: "Forward vs Reverse Proxy", title_ar: "Forward مقابل Reverse Proxy", description: "Forward proxy hides the client. Reverse proxy hides the server.", description_ar: "الـ Forward Proxy بيخبي المستخدم. الـ Reverse Proxy بيخبي السيرفر.", analogy_ar: "Forward = أنت لابس نظارة شمس. Reverse = المطعم بيخبي المطبخ.", keyPoints: [{ title: "Forward", description: "Client anonymity, filtering" }, { title: "Reverse", description: "Load balancing, SSL, caching" }, { title: "Nginx", description: "Most popular reverse proxy" }] },
+                { title: "API Gateway", title_ar: "بوابة الـ API", description: "Single entry point for all API calls. Handles auth, rate limiting, routing.", description_ar: "الباب الرئيسي لكل الـ APIs.", analogy_ar: "زي الأمن على باب العمارة — بيتأكد من هويتك وبيوجهك للشقة الصح.", keyPoints: [{ title: "Authentication", description: "Verify identity at the gate" }, { title: "Rate Limiting", description: "Prevent abuse" }, { title: "Routing", description: "Route to correct microservice" }] }
+            ],
+            codeLanguages: ["typescript"], visualExamples: [{ title: "CDN Architecture", description: "CDN edge servers around the world", type: "svg" }],
+            keyFeatures: ["CDN caching", "Proxy types", "API Gateway", "Service mesh"],
+            demoSection: { title: "CDN Latency Demo", title_ar: "عرض سرعة CDN", description: "Compare latency with and without CDN", interactiveElements: [{ type: "comparison", description: "CDN vs direct server latency" }] }
+        },
+        {
+            id: "module09", title: "Database Scaling", title_ar: "توسيع قواعد البيانات",
+            slug: "module09_database_scaling", level: "advanced", color: "from-rose-600 to-rose-800",
+            shortDescription: "Scale databases to handle millions of users",
+            shortDescription_ar: "وسّع قواعد البيانات لتخدم ملايين المستخدمين",
+            description: "Deep dive into replication, sharding, partitioning, consistent hashing, and database federation.",
+            description_ar: "غوص عميق في النسخ المتماثل، والتقسيم، والـ Consistent Hashing.",
+            topics: [
+                { title: "Replication", title_ar: "النسخ المتماثل", description: "Copy data across multiple servers for read scaling and fault tolerance.", description_ar: "نسخ البيانات على سيرفرات متعددة للسرعة والأمان.", analogy_ar: "زي ما الأستاذ (Master) يكتب والطلاب (Slaves) ينسخوا.", keyPoints: [{ title: "Master-Slave", description: "One writer, many readers" }, { title: "Master-Master", description: "Multiple writers" }, { title: "Replication Lag", description: "Delay between copies" }] },
+                { title: "Sharding", title_ar: "التقسيم (Sharding)", description: "Split data across multiple database instances based on a shard key.", description_ar: "تقسيم البيانات على سيرفرات مختلفة حسب مفتاح معين.", analogy_ar: "تقسيم طلاب المدرسة على فصول — كل فصل مسؤول عن مجموعة.", keyPoints: [{ title: "Shard Key", description: "Determines data distribution" }, { title: "Range-based", description: "Split by ranges of keys" }, { title: "Hash-based", description: "Distribute evenly with hashing" }] },
+                { title: "Consistent Hashing", title_ar: "الـ Consistent Hashing", description: "A hashing technique that minimizes redistribution when nodes are added/removed.", description_ar: "طريقة ذكية لتوزيع البيانات — لو سيرفر وقع، بس جزء صغير يتحرك.", analogy_ar: "تخيل ساعة — كل سيرفر واقف على رقم معين، والبيانات بتروح لأقرب سيرفر.", keyPoints: [{ title: "Hash Ring", description: "Circular hash space" }, { title: "Virtual Nodes", description: "Even distribution" }, { title: "Minimal Disruption", description: "Only K/n keys move" }] }
+            ],
+            codeLanguages: ["typescript"], visualExamples: [{ title: "Sharding Diagram", description: "Data distribution across shards", type: "svg" }],
+            keyFeatures: ["Master-slave replication", "Horizontal sharding", "Consistent hashing", "Federation"],
+            demoSection: { title: "Sharding Visualizer", title_ar: "مرئي التقسيم", description: "Watch data distribute across shards with consistent hashing", interactiveElements: [{ type: "visualizer", description: "Hash ring with virtual nodes" }] }
+        },
+        {
+            id: "module10", title: "Consistency & Availability (CAP)", title_ar: "الاتساق والتوافر (نظرية CAP)",
+            slug: "module10_consistency_availability", level: "advanced", color: "from-fuchsia-600 to-fuchsia-800",
+            shortDescription: "The fundamental trade-offs in distributed systems",
+            shortDescription_ar: "التوازنات الأساسية في الأنظمة الموزعة",
+            description: "Understand CAP theorem, consistency models, PACELC, and consensus algorithms.",
+            description_ar: "افهم نظرية CAP، ونماذج الاتساق، وخوارزميات التوافق.",
+            topics: [
+                { title: "CAP Theorem", title_ar: "نظرية CAP", description: "In a distributed system, you can only guarantee two of: Consistency, Availability, Partition Tolerance.", description_ar: "في النظام الموزع، بتختار 2 من 3: Consistency, Availability, Partition Tolerance.", analogy_ar: "زي ما مينفعش تاكل الكيكة وتفضل موجودة — لازم تختار.", keyPoints: [{ title: "C", description: "Every read gets the most recent write" }, { title: "A", description: "Every request gets a response" }, { title: "P", description: "System works despite network partitions" }] },
+                { title: "Consistency Models", title_ar: "نماذج الاتساق", description: "Strong consistency vs eventual consistency — and everything in between.", description_ar: "Strong: كل الناس شايفة نفس الحاجة فوراً. Eventual: بعد شوية الكل هيشوف نفس الحاجة.", analogy_ar: "Strong Consistency: ساعة بتتظبط مع الكل في نفس اللحظة. Eventual: كل واحد ساعته هتتظبط بعد شوية.", keyPoints: [{ title: "Strong", description: "Linearizable, immediate" }, { title: "Eventual", description: "Converges over time" }, { title: "Causal", description: "Respects causality ordering" }] },
+                { title: "Consensus Algorithms", title_ar: "خوارزميات التوافق", description: "How distributed nodes agree on a value. Paxos and Raft protocols.", description_ar: "إزاي السيرفرات بتتفق على قرار — Paxos و Raft.", analogy_ar: "زي تصويت — الأغلبية بتكسب وكل الناس بتمشي على القرار.", keyPoints: [{ title: "Raft", description: "Leader election + log replication" }, { title: "Paxos", description: "Classic consensus protocol" }, { title: "Quorum", description: "Majority agreement needed" }] }
+            ],
+            codeLanguages: ["typescript"], visualExamples: [{ title: "CAP Triangle", description: "CAP theorem visualization", type: "svg" }],
+            keyFeatures: ["CAP theorem", "Consistency models", "PACELC", "Raft consensus"],
+            demoSection: { title: "CAP Explorer", title_ar: "مستكشف CAP", description: "Choose priorities and see real-world system examples", interactiveElements: [{ type: "explorer", description: "Interactive CAP trade-off selector" }] }
+        },
+        {
+            id: "module11", title: "Common Design Patterns", title_ar: "أنماط تصميم الأنظمة الشائعة",
+            slug: "module11_design_patterns", level: "advanced", color: "from-lime-600 to-lime-800",
+            shortDescription: "Proven patterns for building resilient systems",
+            shortDescription_ar: "أنماط مجربة لبناء أنظمة متينة",
+            description: "Master microservices, event sourcing, CQRS, circuit breaker, and saga patterns.",
+            description_ar: "اتقن الـ Microservices، و Event Sourcing، و CQRS، و Circuit Breaker.",
+            topics: [
+                { title: "Microservices Architecture", title_ar: "بنية الخدمات المصغرة", description: "Decompose a monolith into independent, deployable services.", description_ar: "تقسيم النظام الكبير لخدمات صغيرة مستقلة.", analogy_ar: "بدل مصنع واحد كبير — خلي كل ورشة مسؤولة عن حاجة واحدة.", keyPoints: [{ title: "Independence", description: "Deploy, scale, fail independently" }, { title: "API Boundaries", description: "Services communicate via APIs" }, { title: "Data Ownership", description: "Each service owns its data" }] },
+                { title: "Circuit Breaker", title_ar: "قاطع الدائرة", description: "Stop calling a failing service to prevent cascade failures.", description_ar: "لو خدمة بتفشل كتير، بنقطع الاتصال بيها مؤقتاً عشان النظام كله ميقعش.", analogy_ar: "زي القاطع الكهربائي في البيت — لو فيه ضغط زيادة بيقطع الكهربا عشان البيت ميحترقش.", keyPoints: [{ title: "Closed", description: "Normal operation" }, { title: "Open", description: "Fail fast, don't call" }, { title: "Half-Open", description: "Test if service recovered" }] },
+                { title: "Event Sourcing & CQRS", title_ar: "Event Sourcing و CQRS", description: "Store events instead of state. Separate read and write models.", description_ar: "بدل ما تحفظ الحالة الحالية بس، بتحفظ كل الأحداث.", analogy_ar: "Event Sourcing زي كشف حساب البنك — كل العمليات متسجلة. CQRS زي فصل الاستلام عن التسليم.", keyPoints: [{ title: "Event Log", description: "Immutable sequence of events" }, { title: "Replay", description: "Rebuild state from events" }, { title: "CQRS", description: "Different models for read/write" }] }
+            ],
+            codeLanguages: ["typescript"], visualExamples: [{ title: "Microservices", description: "Service decomposition diagram", type: "svg" }],
+            keyFeatures: ["Microservices", "Circuit Breaker", "Event Sourcing", "CQRS", "Saga"],
+            demoSection: { title: "Pattern Selector", title_ar: "اختيار النمط", description: "Describe your problem and get pattern recommendations", interactiveElements: [{ type: "selector", description: "Problem → Pattern matching" }] }
+        },
+        {
+            id: "module12", title: "Case Study: URL Shortener", title_ar: "دراسة حالة: اختصار الروابط",
+            slug: "module12_case_study_url_shortener", level: "expert", color: "from-indigo-600 to-blue-800",
+            shortDescription: "Design TinyURL/Bit.ly from scratch",
+            shortDescription_ar: "صمم نظام اختصار روابط من الصفر",
+            description: "End-to-end system design of a URL shortening service — from requirements to scaling.",
+            description_ar: "تصميم نظام اختصار روابط من الألف للياء.",
+            topics: [
+                { title: "Requirements & Estimation", title_ar: "المتطلبات والتقدير", description: "Gather requirements and do back-of-the-envelope estimation.", description_ar: "اجمع المتطلبات واعمل تقدير.", analogy_ar: "أول 5 دقائق في الانترفيو — لازم تسأل الأسئلة الصح.", keyPoints: [{ title: "Writes", description: "100M URLs/day" }, { title: "Reads", description: "10:1 read/write ratio" }, { title: "Storage", description: "~500 bytes per URL" }] },
+                { title: "URL Encoding", title_ar: "ترميز الروابط", description: "Base62 encoding vs MD5 hashing for generating short codes.", description_ar: "إزاي تحول رابط طويل لقصير — Base62 أو MD5.", analogy_ar: "زي ما لحد بيقولك اسمه محمد أحمد — بتنده عليه (م.أ) اختصاراً.", keyPoints: [{ title: "Base62", description: "[a-zA-Z0-9] encoding" }, { title: "Counter", description: "Auto-increment + encode" }, { title: "Collision", description: "Handle duplicate short codes" }] },
+                { title: "Scaling", title_ar: "التوسع", description: "Handling billions of URLs with caching, sharding, and CDN.", description_ar: "إزاي تخلي النظام يستحمل مليارات الروابط.", analogy_ar: "من كشك صغير لسلسلة محلات — كل فرع بيخدم منطقة.", keyPoints: [{ title: "Cache", description: "Hot URLs in Redis" }, { title: "Shard", description: "Distribute by hash prefix" }, { title: "CDN", description: "Cache 301 redirects at edge" }] }
+            ],
+            codeLanguages: ["typescript"], visualExamples: [{ title: "URL Shortener Architecture", description: "Full system diagram", type: "svg" }],
+            keyFeatures: ["Requirements gathering", "URL encoding", "Database design", "Scaling strategy"],
+            demoSection: { title: "URL Shortener Builder", title_ar: "بناء مختصر الروابط", description: "Build the URL shortener step by step", interactiveElements: [{ type: "builder", description: "Step-by-step architecture builder" }] }
+        },
+        {
+            id: "module13", title: "Case Study: Chat System", title_ar: "دراسة حالة: نظام محادثات",
+            slug: "module13_case_study_chat_system", level: "expert", color: "from-green-600 to-emerald-800",
+            shortDescription: "Design WhatsApp/Messenger",
+            shortDescription_ar: "صمم نظام محادثات زي واتساب",
+            description: "Design a real-time chat system with WebSockets, message storage, and online presence.",
+            description_ar: "صمم نظام محادثات حقيقي مع WebSocket وتخزين الرسائل.",
+            topics: [
+                { title: "WebSocket Architecture", title_ar: "بنية WebSocket", description: "Connection gateway, chat service, and message routing.", description_ar: "بوابة الاتصال، وخدمة المحادثة، وتوجيه الرسائل.", analogy_ar: "المستخدم بيتصل بالبدالة (Gateway) — البدالة بتوصله بالشخص الصح.", keyPoints: [{ title: "Gateway", description: "Manage WebSocket connections" }, { title: "Routing", description: "Find recipient's server" }, { title: "Presence", description: "Online/offline heartbeat" }] },
+                { title: "Message Storage", title_ar: "تخزين الرسائل", description: "Use Cassandra for messages (write-heavy) and MySQL for user data.", description_ar: "Cassandra للرسائل (كتابة كتير) و MySQL لبيانات المستخدمين.", analogy_ar: "الرسائل زي الجرايد — كل يوم بتتراكم بكميات كبيرة. بيانات المستخدمين منظمة ومحدودة.", keyPoints: [{ title: "Write-heavy", description: "Cassandra for messages" }, { title: "Relational", description: "MySQL for users & groups" }, { title: "Media", description: "S3 for images/files" }] },
+                { title: "Group Chat & Fan-out", title_ar: "المحادثات الجماعية", description: "Fan-out on write for small groups. Fan-out on read for large groups.", description_ar: "Fan-out on write: لكل عضو نسخة. Fan-out on read: الكل بيقرأ من نفس المكان.", analogy_ar: "مجموعة صغيرة: كل واحد ياخد نسخة من المذكرة. مجموعة كبيرة: الكل بيقرأ من نفس اللوحة.", keyPoints: [{ title: "Small groups", description: "Write to each member's inbox" }, { title: "Large groups", description: "Read from shared timeline" }, { title: "Notifications", description: "Push for offline users" }] }
+            ],
+            codeLanguages: ["typescript"], visualExamples: [{ title: "Chat Architecture", description: "Full chat system diagram", type: "svg" }],
+            keyFeatures: ["WebSocket design", "Message storage", "Group chat", "Online presence"],
+            demoSection: { title: "Chat Flow Simulator", title_ar: "محاكي تدفق المحادثة", description: "Send a message and trace its path through the system", interactiveElements: [{ type: "simulator", description: "Message path visualization" }] }
+        },
+        {
+            id: "module14", title: "Case Study: Social Media Feed", title_ar: "دراسة حالة: خلاصة أخبار",
+            slug: "module14_case_study_social_media", level: "expert", color: "from-sky-600 to-blue-800",
+            shortDescription: "Design Twitter/Instagram Feed",
+            shortDescription_ar: "صمم خلاصة أخبار زي تويتر",
+            description: "Design a social media news feed with timeline generation, fan-out strategies, and trending.",
+            description_ar: "صمم خلاصة أخبار مع توليد الـ Timeline واستراتيجيات الـ Fan-out.",
+            topics: [
+                { title: "Fan-out Strategies", title_ar: "استراتيجيات الـ Fan-out", description: "Fan-out on write: pre-compute timelines. Fan-out on read: compute on demand.", description_ar: "Fan-out on Write: جهز الـ timeline مسبقاً. Fan-out on Read: اعمله لما المستخدم يطلبه.", analogy_ar: "Write: اطبع الجريدة وابعتها للكل. Read: كل واحد يقرأ الأخبار من الموقع.", keyPoints: [{ title: "Write", description: "Fast read, expensive write" }, { title: "Read", description: "Cheap write, slow read" }, { title: "Hybrid", description: "Mix for celebrities" }] },
+                { title: "Timeline Generation", title_ar: "توليد الـ Timeline", description: "Merge posts from followed users, sorted by time and relevance.", description_ar: "دمج بوستات المتابَعين، مرتبة بالوقت والأهمية.", analogy_ar: "زي ما بتقلب الجرايد وبتختار أهم الأخبار من كل جريدة.", keyPoints: [{ title: "Merge", description: "Merge sorted post lists" }, { title: "Ranking", description: "Time + engagement score" }, { title: "Cache", description: "Pre-built timeline cache" }] },
+                { title: "Celebrity Problem", title_ar: "مشكلة المشاهير", description: "Celebrities with millions of followers can't use fan-out on write.", description_ar: "ميسي عنده 500 مليون follower — مينفعش نعمل fan-out on write.", analogy_ar: "لو حد عنده مليون صاحب — مينفعش يبعت لكل واحد رسالة لوحده.", keyPoints: [{ title: "Threshold", description: ">10K followers = celebrity" }, { title: "Hybrid", description: "Fan-out on read for celebrities" }, { title: "Cache", description: "Cache celebrity posts globally" }] }
+            ],
+            codeLanguages: ["typescript"], visualExamples: [{ title: "Feed Architecture", description: "News feed generation pipeline", type: "svg" }],
+            keyFeatures: ["Fan-out strategies", "Timeline design", "Celebrity problem", "Trending"],
+            demoSection: { title: "Fan-out Comparison", title_ar: "مقارنة Fan-out", description: "Compare fan-out on write vs read performance", interactiveElements: [{ type: "comparison", description: "Side-by-side fan-out strategy comparison" }] }
+        },
+        {
+            id: "module15", title: "Case Study: Video Platform", title_ar: "دراسة حالة: منصة فيديو",
+            slug: "module15_case_study_video_platform", level: "expert", color: "from-red-600 to-rose-800",
+            shortDescription: "Design YouTube/Netflix",
+            shortDescription_ar: "صمم منصة فيديو زي يوتيوب",
+            description: "Design a video upload, transcoding, and streaming platform at scale.",
+            description_ar: "صمم منصة رفع ومعالجة وبث فيديوهات على نطاق واسع.",
+            topics: [
+                { title: "Video Upload Pipeline", title_ar: "خط رفع الفيديو", description: "Chunked upload → Queue → Transcode → CDN distribution.", description_ar: "رفع مقسم → طابور → تحويل → توزيع على CDN.", analogy_ar: "زي مصنع — الفيديو بيدخل خام وبيتقطع ويتعبأ ويتوزع على المحلات.", keyPoints: [{ title: "Chunked Upload", description: "Split large files into chunks" }, { title: "Queue", description: "Processing pipeline" }, { title: "DAG", description: "Directed Acyclic Graph for tasks" }] },
+                { title: "Video Transcoding", title_ar: "تحويل الفيديو", description: "Convert source video to multiple resolutions and codecs.", description_ar: "تحويل الفيديو لدقة مختلفة: 360p, 720p, 1080p, 4K.", analogy_ar: "طبع نفس الكتاب بأحجام مختلفة — جيب وعادي وكبير.", keyPoints: [{ title: "Codecs", description: "H.264, H.265, VP9, AV1" }, { title: "Resolutions", description: "360p to 4K" }, { title: "Containers", description: "MP4, WebM, HLS" }] },
+                { title: "Adaptive Bitrate Streaming", title_ar: "البث المتكيف", description: "HLS/DASH automatically adjust video quality based on network conditions.", description_ar: "الجودة بتتغير حسب سرعة الإنترنت تلقائياً.", analogy_ar: "زي رادار السرعة — لو الإنترنت بطيء بتنزل الجودة، لو سريع بتعلي.", keyPoints: [{ title: "HLS", description: "Apple's streaming protocol" }, { title: "DASH", description: "Open standard adaptive streaming" }, { title: "Segments", description: "2-10 second video chunks" }] }
+            ],
+            codeLanguages: ["typescript"], visualExamples: [{ title: "Video Pipeline", description: "Upload to streaming pipeline", type: "svg" }],
+            keyFeatures: ["Upload pipeline", "Transcoding", "Adaptive streaming", "CDN delivery"],
+            demoSection: { title: "Upload Pipeline Visualizer", title_ar: "مرئي خط الرفع", description: "Trace a video from upload to playback", interactiveElements: [{ type: "visualizer", description: "Video processing pipeline steps" }] }
+        },
+        {
+            id: "module16", title: "Interview Framework (RESHADED)", title_ar: "إطار عمل مقابلات تصميم الأنظمة",
+            slug: "module16_interview_framework", level: "expert", color: "from-purple-600 to-violet-800",
+            shortDescription: "Ace your system design interview",
+            shortDescription_ar: "اتقن مقابلة تصميم الأنظمة",
+            description: "The RESHADED framework: Requirements, Estimation, Storage, High-level, API, Detailed, Evaluate, Discuss.",
+            description_ar: "إطار RESHADED: المتطلبات، التقدير، التخزين، التصميم العام، الـ API، التفاصيل، التقييم، المناقشة.",
+            topics: [
+                { title: "R — Requirements", title_ar: "R — المتطلبات", description: "Clarify functional and non-functional requirements before designing.", description_ar: "وضّح المتطلبات الوظيفية وغير الوظيفية قبل ما تصمم.", analogy_ar: "اسأل الأسئلة الصح — زي ما المهندس بيسأل صاحب البيت قبل ما يرسم.", keyPoints: [{ title: "Functional", description: "What the system should do" }, { title: "Non-functional", description: "Performance, scalability, security" }, { title: "Scope", description: "What's in/out of scope" }] },
+                { title: "E — Estimation", title_ar: "E — التقدير", description: "Back-of-the-envelope calculations: DAU, QPS, storage, bandwidth.", description_ar: "حسابات تقريبية: عدد المستخدمين، طلبات في الثانية، مساحة التخزين.", analogy_ar: "زي ما بتقدر ميزانية الرحلة قبل ما تسافر.", keyPoints: [{ title: "DAU", description: "Daily Active Users" }, { title: "QPS", description: "Queries Per Second" }, { title: "Storage", description: "TB/day estimate" }] },
+                { title: "S-H-A-D-E-D", title_ar: "الخطوات المتبقية", description: "Storage Schema → High-level Design → API Design → Detailed Design → Evaluate → Discuss trade-offs.", description_ar: "التخزين → التصميم العام → الـ API → التفاصيل → التقييم → المناقشة.", analogy_ar: "خطوة خطوة — من الصورة الكبيرة للتفاصيل.", keyPoints: [{ title: "Storage", description: "DB schema and data model" }, { title: "High-level", description: "Box diagram of key components" }, { title: "Evaluate", description: "Bottlenecks and failure points" }] }
+            ],
+            codeLanguages: ["typescript"], visualExamples: [{ title: "RESHADED Steps", description: "Framework step visualization", type: "svg" }],
+            keyFeatures: ["RESHADED framework", "Back-of-envelope math", "Structured approach", "Trade-off analysis"],
+            demoSection: { title: "Mock Interview Timer", title_ar: "مؤقت المقابلة", description: "45-minute timer with RESHADED checklist", interactiveElements: [{ type: "timer", description: "Timed interview simulation with checklist" }] }
+        }
+    ],
+    techStack: {
+        framework: "Next.js (App Router)",
+        language: "TypeScript",
+        uiComponents: "Custom with Tailwind CSS",
+        styling: "Tailwind CSS",
+        visualization: ["React + SVG", "Interactive Components"]
+    },
+    keyFeatures: [
+        "Interactive Architecture Diagrams",
+        "Real-world Case Studies",
+        "Step-by-Step System Building",
+        "Back-of-the-Envelope Calculators",
+        "Interview Preparation Framework",
+        "Dark/Light Theme",
+        "Bilingual (Arabic + English)"
+    ],
+    learningResources: [
+        { title: "Designing Data-Intensive Applications", url: "https://dataintensive.net/", type: "Book" },
+        { title: "System Design Primer (GitHub)", url: "https://github.com/donnemartin/system-design-primer", type: "Repository" },
+        { title: "Grokking System Design", url: "https://www.educative.io/courses/grokking-modern-system-design-interview-for-engineers-managers", type: "Course" },
+        { title: "ByteByteGo Newsletter", url: "https://blog.bytebytego.com/", type: "Newsletter" }
+    ],
+    authorInfo: {
+        name: "Osama Zinhom",
+        role: "System Design Expert & Developer",
+        contact: "contact@systemdesignmaster.com",
+        whatsapp: "201116771405",
+        bio: "Osama is an experienced developer specializing in System Design and interactive educational content."
+    },
+    meta: {
+        version: "1.0.0",
+        lastUpdated: "2026-02-11",
+        mongoDBCompatible: true,
+        schemaVersion: "1.0"
+    }
+};
+
+fs.writeFileSync(
+    require('path').join(__dirname, 'public', 'sd_content.json'),
+    JSON.stringify(content, null, 2),
+    'utf8'
+);
+console.log('sd_content.json generated successfully!');

@@ -1,26 +1,332 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&family=Source+Code+Pro:wght@400;500&family=Cairo:wght@400;600;700&display=swap');
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-background-light text-text-light dark:bg-background-dark dark:text-text-dark;
+        font-feature-settings: "kern";
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-display font-bold;
+    }
+
+    h1 {
+        @apply text-4xl md:text-5xl lg:text-6xl;
+    }
+
+    h2 {
+        @apply text-3xl md:text-4xl;
+    }
+
+    h3 {
+        @apply text-2xl md:text-3xl;
+    }
+
+    h4 {
+        @apply text-xl md:text-2xl;
+    }
+
+    h5 {
+        @apply text-lg md:text-xl;
+    }
+
+    h6 {
+        @apply text-base md:text-lg;
+    }
+
+    p {
+        @apply text-base leading-relaxed;
+    }
+
+    code {
+        @apply font-mono rounded bg-surface-light dark:bg-surface-dark px-1 py-0.5;
+    }
+
+    pre {
+        @apply font-mono rounded-lg bg-surface-light dark:bg-surface-dark p-4 overflow-x-auto;
+    }
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@layer components {
+    .btn {
+        @apply inline-flex items-center justify-center px-6 py-3 rounded-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+    }
+
+    .btn-primary {
+        @apply btn bg-primary text-white hover:bg-primary-dark focus:ring-primary;
+    }
+
+    .btn-secondary {
+        @apply btn bg-secondary text-white hover:bg-secondary-dark focus:ring-secondary;
+    }
+
+    .btn-accent {
+        @apply btn bg-accent text-white hover:bg-accent-dark focus:ring-accent;
+    }
+
+    .btn-outline {
+        @apply btn border-2 border-primary text-primary hover:bg-primary hover:text-white focus:ring-primary;
+    }
+
+    .card {
+        @apply rounded-xl overflow-hidden bg-background-light dark:bg-surface-dark shadow-card dark:shadow-card-dark transition-shadow duration-300 hover:shadow-card-hover dark:hover:shadow-card-hover-dark;
+    }
+
+    .glass-card {
+        background: rgba(15, 15, 25, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+        border-color: rgba(255, 255, 255, 0.1);
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .container-custom {
+        @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    }
+
+    .section {
+        @apply py-12 md:py-24;
+    }
+
+    .module-card {
+        @apply card p-6 animate-fade-in;
+    }
+
+    .module-card-header {
+        @apply flex items-start justify-between mb-4;
+    }
+
+    .module-card-title {
+        @apply text-xl font-bold text-primary dark:text-primary-light;
+    }
+
+    .module-card-description {
+        @apply text-gray-600 dark:text-gray-300;
+    }
+
+    .module-card-footer {
+        @apply mt-6 flex items-center justify-between;
+    }
+
+    .module-topics-list {
+        @apply mt-4 space-y-2;
+    }
+
+    .module-topic-item {
+        @apply flex items-center text-gray-700 dark:text-gray-300;
+    }
+
+    .visualizer-container {
+        @apply p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-surface-light dark:bg-surface-dark mt-4;
+    }
+
+    .tabs {
+        @apply flex border-b border-gray-200 dark:border-gray-700;
+    }
+
+    .tab {
+        @apply px-4 py-2 text-gray-600 dark:text-gray-300 border-b-2 border-transparent hover:text-primary hover:border-primary;
+    }
+
+    .tab-active {
+        @apply text-primary border-primary font-medium;
+    }
+
+    .concept-card {
+        @apply p-5 rounded-xl border transition-all duration-300;
+    }
+
+    .demo-container {
+        @apply p-6 rounded-2xl border border-gray-200/10 bg-gray-950/40;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@layer utilities {
+    .text-gradient {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
+    }
+
+    .text-gradient-accent {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-secondary to-accent;
+    }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom animations */
+@keyframes pulse-slow {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.85;
+        transform: scale(0.95);
+    }
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes float-slow {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+.animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+}
+
+@keyframes float-medium {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-float-medium {
+    animation: float-medium 6s ease-in-out infinite;
+}
+
+@keyframes float-fast {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.animate-float-fast {
+    animation: float-fast 4s ease-in-out infinite;
+}
+
+@keyframes gradientText {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* WhatsApp Button & Pulse Effect */
+.btn-whatsapp {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-md text-white font-medium bg-green-500 hover:bg-green-600 transition-all duration-300;
+}
+
+@keyframes pulse-effect {
+    0% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(37, 211, 102, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+    }
+}
+
+.pulse-effect {
+    animation: pulse-effect 2s infinite;
+    position: relative;
+}
+
+.creator-highlight {
+    @apply font-bold text-gradient-accent relative inline-block py-1 px-3 rounded-lg;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-surface-light dark:bg-background-dark;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-gray-400 dark:bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500 dark:bg-gray-500;
+}
+
+/* SVG diagram styles */
+.diagram-container svg {
+    width: 100%;
+    height: auto;
+}
+
+/* Code block enhancements */
+.code-block {
+    @apply relative rounded-xl overflow-hidden;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.code-block-header {
+    @apply flex items-center justify-between px-4 py-2 text-sm;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.code-block pre {
+    @apply p-4 text-sm leading-relaxed;
+    background: transparent;
 }
